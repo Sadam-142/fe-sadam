@@ -26,7 +26,6 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "UKM Risalah | Sistem Informasi Keanggotaan",
   description: "Sistem keanggotaan UKM Risalah.",
-  manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
