@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 import { AdminSidebar } from "@/components/layout/admin-sidebar";
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 
@@ -9,7 +9,9 @@ interface LayoutProps {
 export default function AdminLayout({ children }: LayoutProps) {
   return (
     <SidebarProvider>
-      <AdminSidebar />
+      <Suspense fallback={<div>Loading Sidebar...</div>}>
+        <AdminSidebar />
+      </Suspense>
       <SidebarInset className="bg-gradient-to-br from-[#f8fdf9] via-[#f0fbf3] to-[#f8fdf9] relative overflow-hidden">
         {/* Background glow effects */}
         <div className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-emerald-400/5 blur-[120px] pointer-events-none" />

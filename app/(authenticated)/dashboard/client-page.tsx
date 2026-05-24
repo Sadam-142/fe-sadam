@@ -33,6 +33,7 @@ export default function DashboardPage() {
     persentase_keaktifan: 0,
     aktivitas_terakhir: [] as DashboardPresensi[],
     chartData: [] as any[],
+    hadirBulanIni: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -58,7 +59,7 @@ export default function DashboardPage() {
         const mappedPresensi = presensi.map((p: any) => {
           const k = kegiatan.find((keg: any) => keg.id_kegiatan === p.id_kegiatan);
           return { ...p, kegiatan: k };
-        }).sort((a, b) => new Date(b.tgl_presensi).getTime() - new Date(a.tgl_presensi).getTime())
+        }).sort((a: any, b: any) => new Date(b.tgl_presensi).getTime() - new Date(a.tgl_presensi).getTime())
         .slice(0, 4); // last 4 activities
 
         // Calculate monthly attendance for chart

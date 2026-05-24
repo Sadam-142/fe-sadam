@@ -14,8 +14,10 @@ type User = {
   nim?: string;
   email?: string;
   angkatan?: string;
+  fakultas?: string;
   program_studi?: string;
   no_hp?: string;
+  alamat_domisili?: string;
   foto_profil?: string;
 };
 
