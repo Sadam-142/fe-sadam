@@ -111,22 +111,8 @@ export function PendaftaranForm() {
     defaultValues: {
       jenis_kelamin: "L",
       bidang_minat: [],
+    },
   });
-
-  // Extract onChange from register to add custom validation logic
-  const { onChange: onChangeIg, ...restIg } = register("bukti_follow_ig");
-  const { onChange: onChangeYt, ...restYt } = register("bukti_follow_yt");
-  const { onChange: onChangeTiktok, ...restTiktok } = register("bukti_follow_tiktok");
-  const { onChange: onChangePembayaran, ...restPembayaran } = register("bukti_pembayaran");
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, hookFormOnChange: any) => {
-    const file = e.target.files?.[0];
-    if (file && file.size > 5 * 1024 * 1024) {
-      toast.error("Ukuran file " + file.name + " terlalu besar! (Maksimal 5MB). Silakan kompres foto Anda terlebih dahulu.");
-      e.target.value = ""; // Reset input
-    }
-    hookFormOnChange(e);
-  };
 
   const nextStep = async () => {
     let fieldsToValidate: any[] = [];
@@ -134,7 +120,7 @@ export function PendaftaranForm() {
     if (currentStep === 0) {
       fieldsToValidate = ["email", "nama_lengkap", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat_domisili", "no_hp"];
     } else if (currentStep === 1) {
-      fieldsToValidate = ["nim", "fakultas", "program_studi", "angkatan", "bidang_minat"];
+      fieldsToValidate = ["fakultas", "program_studi", "angkatan", "bidang_minat"];
     } else if (currentStep === 2) {
       fieldsToValidate = ["nama_akun_ig", "bukti_follow_ig", "bukti_follow_yt", "bukti_follow_tiktok"];
       if (paymentMethod !== "COD") {
@@ -178,29 +164,6 @@ export function PendaftaranForm() {
       toast.error(error.message || "Gagal mengirim pendaftaran");
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const onError = (formErrors: any) => {
-    console.error("Validation errors on submit:", formErrors);
-    
-    // Check which step the error belongs to and navigate back to it
-    const errorFields = Object.keys(formErrors);
-    let stepWithError = -1;
-    
-    if (errorFields.some(f => ["email", "nama_lengkap", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat_domisili", "no_hp"].includes(f))) {
-      stepWithError = 0;
-    } else if (errorFields.some(f => ["nim", "fakultas", "program_studi", "angkatan", "bidang_minat"].includes(f))) {
-      stepWithError = 1;
-    } else if (errorFields.some(f => ["nama_akun_ig", "bukti_follow_ig", "bukti_follow_yt", "bukti_follow_tiktok", "bukti_pembayaran"].includes(f))) {
-      stepWithError = 2;
-    }
-    
-    if (stepWithError !== -1) {
-      setCurrentStep(stepWithError);
-      toast.error("Ada isian yang belum lengkap/valid. Silakan periksa kolom yang ditandai merah.");
-    } else {
-      toast.error("Gagal memvalidasi form. Silakan periksa kembali isian Anda.");
     }
   };
 
@@ -313,7 +276,7 @@ export function PendaftaranForm() {
             <CardDescription className="text-[14px] text-gray-500 font-medium">Lengkapi data pendaftaran UKM Risalah dengan saksama di bawah ini.</CardDescription>
           </CardHeader>
           <CardContent className="p-6 sm:p-10">
-            <form onSubmit={handleSubmit(onSubmit, onError)} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               
               {/* STEP 1: DATA DIRI */}
               {currentStep === 0 && (
@@ -490,7 +453,7 @@ export function PendaftaranForm() {
                             <a href="https://www.instagram.com/ukmrisalah?igsh=MTY2cW16c2J4eTByYw==" target="_blank" className="text-xs text-blue-500 font-medium hover:underline">Buka Profil Instagram ↗</a>
                           </div>
                         </div>
-                        <Input type="file" accept="image/png, image/jpeg, image/webp" className="h-11 text-xs bg-gray-50/50 rounded-xl cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-pink-50 file:text-pink-600 hover:file:bg-pink-100" {...restIg} onChange={(e) => handleFileChange(e, onChangeIg)} />
+                        <Input type="file" accept="image/png, image/jpeg" className="h-11 text-xs bg-gray-50/50 rounded-xl cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-pink-50 file:text-pink-600 hover:file:bg-pink-100" {...register("bukti_follow_ig")} />
                         {errors.bukti_follow_ig && <p className="text-xs font-semibold text-red-500">{errors.bukti_follow_ig.message as string}</p>}
                       </div>
 
@@ -502,7 +465,7 @@ export function PendaftaranForm() {
                             <a href="https://youtube.com/@risalahfst?si=Ktg-ESTBbCQmf0vW" target="_blank" className="text-xs text-blue-500 font-medium hover:underline">Buka Channel YouTube ↗</a>
                           </div>
                         </div>
-                        <Input type="file" accept="image/png, image/jpeg, image/webp" className="h-11 text-xs bg-gray-50/50 rounded-xl cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-600 hover:file:bg-red-100" {...restYt} onChange={(e) => handleFileChange(e, onChangeYt)} />
+                        <Input type="file" accept="image/png, image/jpeg" className="h-11 text-xs bg-gray-50/50 rounded-xl cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-600 hover:file:bg-red-100" {...register("bukti_follow_yt")} />
                         {errors.bukti_follow_yt && <p className="text-xs font-semibold text-red-500">{errors.bukti_follow_yt.message as string}</p>}
                       </div>
 
@@ -514,7 +477,7 @@ export function PendaftaranForm() {
                             <a href="https://www.tiktok.com/@ukmrisalah?_r=1&_t=ZS-96ZGhorKIlu" target="_blank" className="text-xs text-blue-500 font-medium hover:underline">Buka Profil TikTok ↗</a>
                           </div>
                         </div>
-                        <Input type="file" accept="image/png, image/jpeg, image/webp" className="h-11 text-xs bg-gray-50/50 rounded-xl cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-black hover:file:bg-gray-200" {...restTiktok} onChange={(e) => handleFileChange(e, onChangeTiktok)} />
+                        <Input type="file" accept="image/png, image/jpeg" className="h-11 text-xs bg-gray-50/50 rounded-xl cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-black hover:file:bg-gray-200" {...register("bukti_follow_tiktok")} />
                         {errors.bukti_follow_tiktok && <p className="text-xs font-semibold text-red-500">{errors.bukti_follow_tiktok.message as string}</p>}
                       </div>
                     </div>
@@ -559,7 +522,7 @@ export function PendaftaranForm() {
                         </div>
                         <div className="space-y-2 pt-2 border-t border-amber-200/50">
                           <Label className="text-[11px] font-bold text-amber-800 uppercase tracking-wider">Upload Bukti Transfer</Label>
-                          <Input type="file" accept="image/png, image/jpeg, image/webp" className="h-11 text-xs bg-white rounded-xl border-amber-200 cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-100 file:text-amber-700 hover:file:bg-amber-200" {...restPembayaran} onChange={(e) => handleFileChange(e, onChangePembayaran)} />
+                          <Input type="file" accept="image/png, image/jpeg" className="h-11 text-xs bg-white rounded-xl border-amber-200 cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-100 file:text-amber-700 hover:file:bg-amber-200" {...register("bukti_pembayaran")} />
                           {errors.bukti_pembayaran && <p className="text-xs font-semibold text-red-500">{errors.bukti_pembayaran.message as string}</p>}
                         </div>
                       </div>
