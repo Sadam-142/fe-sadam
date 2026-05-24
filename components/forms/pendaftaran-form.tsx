@@ -118,9 +118,9 @@ export function PendaftaranForm() {
     let fieldsToValidate: any[] = [];
     
     if (currentStep === 0) {
-      fieldsToValidate = ["email", "nama_lengkap", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat_domisili", "no_hp", "nim"];
+      fieldsToValidate = ["email", "nama_lengkap", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat_domisili", "no_hp"];
     } else if (currentStep === 1) {
-      fieldsToValidate = ["fakultas", "program_studi", "angkatan", "bidang_minat"];
+      fieldsToValidate = ["nim", "fakultas", "program_studi", "angkatan", "bidang_minat"];
     } else if (currentStep === 2) {
       fieldsToValidate = ["nama_akun_ig", "bukti_follow_ig", "bukti_follow_yt", "bukti_follow_tiktok"];
       if (paymentMethod !== "COD") {
@@ -174,9 +174,9 @@ export function PendaftaranForm() {
     const errorFields = Object.keys(formErrors);
     let stepWithError = -1;
     
-    if (errorFields.some(f => ["email", "nama_lengkap", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat_domisili", "no_hp", "nim"].includes(f))) {
+    if (errorFields.some(f => ["email", "nama_lengkap", "jenis_kelamin", "tempat_lahir", "tanggal_lahir", "alamat_domisili", "no_hp"].includes(f))) {
       stepWithError = 0;
-    } else if (errorFields.some(f => ["fakultas", "program_studi", "angkatan", "bidang_minat"].includes(f))) {
+    } else if (errorFields.some(f => ["nim", "fakultas", "program_studi", "angkatan", "bidang_minat"].includes(f))) {
       stepWithError = 1;
     } else if (errorFields.some(f => ["nama_akun_ig", "bukti_follow_ig", "bukti_follow_yt", "bukti_follow_tiktok", "bukti_pembayaran"].includes(f))) {
       stepWithError = 2;
