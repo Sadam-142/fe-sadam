@@ -19,6 +19,7 @@ export default function PendaftaranClientPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filterAngkatan, setFilterAngkatan] = useState<string>("all");
+  const [filterWaktu, setFilterWaktu] = useState<string>("all");
 
   const fetchData = async () => {
     try {
@@ -66,9 +67,32 @@ export default function PendaftaranClientPage() {
 
   // Filtered data
   const filteredData = useMemo(() => {
-    if (filterAngkatan === "all") return pendaftaran;
-    return pendaftaran.filter((p) => p.angkatan === filterAngkatan);
-  }, [pendaftaran, filterAngkatan]);
+    let data = pendaftaran;
+
+    if (filterAngkatan !== "all") {
+      data = data.filter((p) => p.angkatan === filterAngkatan);
+    }
+
+    if (filterWaktu !== "all") {
+      const now = new Date();
+      data = data.filter((p) => {
+        if (!p.created_at) return false;
+        const pDate = new Date(p.created_at.replace(" ", "T"));
+        if (filterWaktu === "today") {
+          return pDate.toDateString() === now.toDateString();
+        } else if (filterWaktu === "week") {
+          const weekAgo = new Date();
+          weekAgo.setDate(now.getDate() - 7);
+          return pDate >= weekAgo;
+        } else if (filterWaktu === "month") {
+          return pDate.getMonth() === now.getMonth() && pDate.getFullYear() === now.getFullYear();
+        }
+        return true;
+      });
+    }
+
+    return data;
+  }, [pendaftaran, filterAngkatan, filterWaktu]);
 
   return (
     <div className="space-y-6">
@@ -84,20 +108,37 @@ export default function PendaftaranClientPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <CardTitle className="text-xl font-bold text-[#0d2318]">Data Pendaftar</CardTitle>
 
-            {/* Filter Angkatan */}
-            <div className="flex items-center gap-2">
-              <label className="text-sm font-semibold text-emerald-800/70 whitespace-nowrap">Angkatan:</label>
-              <Select value={filterAngkatan} onValueChange={setFilterAngkatan}>
-                <SelectTrigger className="h-9 w-[160px] border-emerald-200 text-sm font-semibold text-emerald-800 focus:ring-emerald-400">
-                  <SelectValue placeholder="Semua Angkatan" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Semua Angkatan</SelectItem>
-                  {angkatanOptions.map((angkatan) => (
-                    <SelectItem key={angkatan} value={angkatan}>{angkatan}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            {/* Filters */}
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-semibold text-emerald-800/70 whitespace-nowrap">Waktu:</label>
+                <Select value={filterWaktu} onValueChange={setFilterWaktu}>
+                  <SelectTrigger className="h-9 w-[140px] border-emerald-200 text-sm font-semibold text-emerald-800 focus:ring-emerald-400">
+                    <SelectValue placeholder="Semua Waktu" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Semua Waktu</SelectItem>
+                    <SelectItem value="today">Hari Ini</SelectItem>
+                    <SelectItem value="week">7 Hari Terakhir</SelectItem>
+                    <SelectItem value="month">Bulan Ini</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-semibold text-emerald-800/70 whitespace-nowrap">Angkatan:</label>
+                <Select value={filterAngkatan} onValueChange={setFilterAngkatan}>
+                  <SelectTrigger className="h-9 w-[160px] border-emerald-200 text-sm font-semibold text-emerald-800 focus:ring-emerald-400">
+                    <SelectValue placeholder="Semua Angkatan" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Semua Angkatan</SelectItem>
+                    {angkatanOptions.map((angkatan) => (
+                      <SelectItem key={angkatan} value={angkatan}>{angkatan}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
 
@@ -107,6 +148,9 @@ export default function PendaftaranClientPage() {
             <span className="text-xs font-semibold text-emerald-700">
               Menampilkan <span className="text-emerald-600">{filteredData.length}</span> dari{" "}
               <span className="text-emerald-600">{pendaftaran.length}</span> pendaftar
+              {filterWaktu !== "all" && (
+                <span className="ml-1 text-emerald-500">· Filter: {filterWaktu === 'today' ? 'Hari Ini' : filterWaktu === 'week' ? '7 Hari Terakhir' : 'Bulan Ini'}</span>
+              )}
               {filterAngkatan !== "all" && (
                 <span className="ml-1 text-emerald-500">· Angkatan {filterAngkatan}</span>
               )}

@@ -32,8 +32,8 @@ self.addEventListener("push", (event: PushEvent) => {
     const data = event.data.json() as PushPayload;
     const options: NotificationOptions = {
       body: data.body,
-      icon: "/icons/icon-192x192.png",
-      badge: "/icons/icon-192x192.png",
+      icon: "/UKMRISALAH.png",
+      badge: "/UKMRISALAH.png",
       data: {
         url: data.url || "/",
       },
@@ -116,8 +116,8 @@ self.addEventListener("sync", (event: SyncEvent) => {
           if (pendings.length > 0) {
             self.registration.showNotification("UKM Risalah", {
               body: `${pendings.length} presensi offline Anda telah terkirim ke server!`,
-              icon: "/icons/icon-192x192.png",
-              badge: "/icons/icon-192x192.png",
+              icon: "/UKMRISALAH.png",
+              badge: "/UKMRISALAH.png",
             });
           }
         } catch (error) {
