@@ -463,10 +463,10 @@ export default function ProfilPage() {
             <input 
               type="checkbox" 
               id="push-toggle" 
-              className="h-5 w-5 rounded border-slate-300 text-emerald-500 focus:ring-emerald-500 bg-white"
+              className="h-5 w-5 rounded border-slate-300 text-emerald-500 focus:ring-emerald-500 bg-white cursor-pointer"
               checked={pushPermission === "granted"}
-              onChange={handleSubscribePush}
-              disabled={!isPushSupported || pushPermission === "granted"}
+              onClick={handleSubscribePush}
+              disabled={!isPushSupported}
             />
             <label htmlFor="push-toggle" className="text-xs font-bold text-slate-600 select-none cursor-pointer">Aktif</label>
           </div>
