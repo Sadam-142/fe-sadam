@@ -15,16 +15,8 @@ export const pendaftaranSchema = z.object({
   tanggal_lahir: z.string().refine((val) => !isNaN(Date.parse(val)), "Tanggal lahir tidak valid"),
   alamat_domisili: z.string().min(5, "Alamat domisili wajib diisi"),
   jenis_kelamin: z.enum(["L", "P"], { message: "Pilih jenis kelamin" }),
-  nama_akun_ig: z.string().min(2, "Nama akun IG wajib diisi (contoh: @username)"),
-  bukti_follow_ig: z.any()
-    .refine((files) => files?.length > 0, "Bukti follow IG wajib diunggah")
-    .refine((files) => files?.[0]?.size <= MAX_FILE_SIZE, "Ukuran file maksimal 5MB"),
-  bukti_follow_yt: z.any()
-    .refine((files) => files?.length > 0, "Bukti subscribe YT wajib diunggah")
-    .refine((files) => files?.[0]?.size <= MAX_FILE_SIZE, "Ukuran file maksimal 5MB"),
-  bukti_follow_tiktok: z.any()
-    .refine((files) => files?.length > 0, "Bukti follow TikTok wajib diunggah")
-    .refine((files) => files?.[0]?.size <= MAX_FILE_SIZE, "Ukuran file maksimal 5MB"),
+
+
   bukti_pembayaran: z.any()
     .refine((files) => !files || files.length === 0 || files[0]?.size <= MAX_FILE_SIZE, "Ukuran file maksimal 5MB")
     .optional(), // Optional if COD

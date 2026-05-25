@@ -88,7 +88,7 @@ const FAKULTAS_PRODI = {
 const STEPS = [
   { id: "data-diri", title: "Data Diri" },
   { id: "akademik", title: "Akademik" },
-  { id: "sosmed-pembayaran", title: "Sosmed & Pembayaran" },
+  { id: "pembayaran", title: "Pembayaran" },
   { id: "review", title: "Review & Kirim" },
 ];
 
@@ -122,7 +122,7 @@ export function PendaftaranForm() {
     } else if (currentStep === 1) {
       fieldsToValidate = ["nim", "fakultas", "program_studi", "angkatan", "bidang_minat"];
     } else if (currentStep === 2) {
-      fieldsToValidate = ["nama_akun_ig", "bukti_follow_ig", "bukti_follow_yt", "bukti_follow_tiktok"];
+      fieldsToValidate = [];
       if (paymentMethod !== "COD") {
         fieldsToValidate.push("bukti_pembayaran");
       }
@@ -143,7 +143,7 @@ export function PendaftaranForm() {
       setIsLoading(true);
       const formData = new FormData();
       Object.keys(data).forEach((key) => {
-        if (["bukti_follow_ig", "bukti_follow_yt", "bukti_follow_tiktok", "bukti_pembayaran"].includes(key)) {
+        if (["bukti_pembayaran"].includes(key)) {
           const fileList = data[key as keyof PendaftaranFormData] as FileList;
           if (fileList && fileList.length > 0) {
             formData.append(key, fileList[0]);
@@ -178,7 +178,7 @@ export function PendaftaranForm() {
       stepWithError = 0;
     } else if (errorFields.some(f => ["nim", "fakultas", "program_studi", "angkatan", "bidang_minat"].includes(f))) {
       stepWithError = 1;
-    } else if (errorFields.some(f => ["nama_akun_ig", "bukti_follow_ig", "bukti_follow_yt", "bukti_follow_tiktok", "bukti_pembayaran"].includes(f))) {
+    } else if (errorFields.some(f => ["bukti_pembayaran"].includes(f))) {
       stepWithError = 2;
     }
     
@@ -455,62 +455,9 @@ export function PendaftaranForm() {
               {/* STEP 3: SOSMED & PEMBAYARAN */}
               {currentStep === 2 && (
                 <div className="space-y-8 animate-in fade-in duration-300">
-                  {/* BAGIAN A */}
-                  <div className="space-y-5">
+
                     <div className="flex items-center gap-3 border-b border-gray-100 pb-3">
-                      <div className="w-8 h-8 rounded-full bg-[#1D9E75]/10 flex items-center justify-center text-[#1D9E75] font-bold text-sm">A</div>
-                      <h3 className="text-[17px] font-black text-[#0a1f16]">Sosial Media</h3>
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Nama Akun Instagram</Label>
-                      <Input placeholder="Contoh: @username" className="h-12 rounded-xl bg-gray-50 border-gray-200 focus:bg-white transition-colors" {...register("nama_akun_ig")} />
-                      {errors.nama_akun_ig && <p className="text-xs font-semibold text-red-500">{errors.nama_akun_ig.message}</p>}
-                    </div>
-                    
-                    <div className="grid gap-4 mt-2">
-                      <div className="p-5 border border-gray-100 rounded-2xl bg-white shadow-sm hover:shadow-md hover:border-pink-200 transition-all space-y-3 group">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-500 flex items-center justify-center text-white"><InstagramLogo size={22} weight="fill" /></div>
-                          <div className="flex-1">
-                            <span className="block font-bold text-gray-800">Instagram UKM Risalah</span>
-                            <a href="https://www.instagram.com/ukmrisalah?igsh=MTY2cW16c2J4eTByYw==" target="_blank" className="text-xs text-blue-500 font-medium hover:underline">Buka Profil Instagram ↗</a>
-                          </div>
-                        </div>
-                        <Input type="file" accept="image/png, image/jpeg" className="h-11 text-xs bg-gray-50/50 rounded-xl cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-pink-50 file:text-pink-600 hover:file:bg-pink-100" {...register("bukti_follow_ig")} />
-                        {errors.bukti_follow_ig && <p className="text-xs font-semibold text-red-500">{errors.bukti_follow_ig.message as string}</p>}
-                      </div>
-
-                      <div className="p-5 border border-gray-100 rounded-2xl bg-white shadow-sm hover:shadow-md hover:border-red-200 transition-all space-y-3 group">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-[#FF0000] flex items-center justify-center text-white"><YoutubeLogo size={22} weight="fill" /></div>
-                          <div className="flex-1">
-                            <span className="block font-bold text-gray-800">YouTube Risalah</span>
-                            <a href="https://youtube.com/@risalahfst?si=Ktg-ESTBbCQmf0vW" target="_blank" className="text-xs text-blue-500 font-medium hover:underline">Buka Channel YouTube ↗</a>
-                          </div>
-                        </div>
-                        <Input type="file" accept="image/png, image/jpeg" className="h-11 text-xs bg-gray-50/50 rounded-xl cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-600 hover:file:bg-red-100" {...register("bukti_follow_yt")} />
-                        {errors.bukti_follow_yt && <p className="text-xs font-semibold text-red-500">{errors.bukti_follow_yt.message as string}</p>}
-                      </div>
-
-                      <div className="p-5 border border-gray-100 rounded-2xl bg-white shadow-sm hover:shadow-md hover:border-gray-300 transition-all space-y-3 group">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center text-white"><TiktokLogo size={22} weight="fill" /></div>
-                          <div className="flex-1">
-                            <span className="block font-bold text-gray-800">TikTok UKM Risalah</span>
-                            <a href="https://www.tiktok.com/@ukmrisalah?_r=1&_t=ZS-96ZGhorKIlu" target="_blank" className="text-xs text-blue-500 font-medium hover:underline">Buka Profil TikTok ↗</a>
-                          </div>
-                        </div>
-                        <Input type="file" accept="image/png, image/jpeg" className="h-11 text-xs bg-gray-50/50 rounded-xl cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-black hover:file:bg-gray-200" {...register("bukti_follow_tiktok")} />
-                        {errors.bukti_follow_tiktok && <p className="text-xs font-semibold text-red-500">{errors.bukti_follow_tiktok.message as string}</p>}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* BAGIAN B */}
-                  <div className="space-y-5 pt-4">
-                    <div className="flex items-center gap-3 border-b border-gray-100 pb-3">
-                      <div className="w-8 h-8 rounded-full bg-[#1D9E75]/10 flex items-center justify-center text-[#1D9E75] font-bold text-sm">B</div>
-                      <h3 className="text-[17px] font-black text-[#0a1f16]">Pembayaran HTM</h3>
+                      <h3 className="text-[17px] font-black text-[#0a1f16]">Metode Pembayaran HTM</h3>
                     </div>
                     
                     <div className="p-6 bg-gradient-to-br from-[#1D9E75]/10 to-[#12bd87]/5 rounded-2xl border border-[#1D9E75]/20 text-center relative overflow-hidden">
@@ -557,7 +504,6 @@ export function PendaftaranForm() {
                         <WhatsappLogo size={22} weight="fill" /> Konfirmasi ke Yumaysila
                       </a>
                     </div>
-                  </div>
                 </div>
               )}
 
@@ -577,7 +523,7 @@ export function PendaftaranForm() {
                       <div className="bg-white p-3 rounded-xl border border-gray-50 shadow-sm"><span className="block text-[11px] text-gray-400 font-bold uppercase tracking-wider mb-0.5">Tempat, Tanggal Lahir</span><strong className="text-gray-800 text-[15px]">{formData.tempat_lahir}, {formData.tanggal_lahir}</strong></div>
                       <div className="sm:col-span-2 bg-white p-3 rounded-xl border border-gray-50 shadow-sm"><span className="block text-[11px] text-gray-400 font-bold uppercase tracking-wider mb-0.5">Alamat Domisili</span><strong className="text-gray-800 text-[15px]">{formData.alamat_domisili}</strong></div>
                       <div className="bg-white p-3 rounded-xl border border-gray-50 shadow-sm"><span className="block text-[11px] text-gray-400 font-bold uppercase tracking-wider mb-0.5">Nomor WhatsApp</span><strong className="text-gray-800 text-[15px]">{formData.no_hp}</strong></div>
-                      <div className="bg-white p-3 rounded-xl border border-gray-50 shadow-sm"><span className="block text-[11px] text-gray-400 font-bold uppercase tracking-wider mb-0.5">Nama Akun IG</span><strong className="text-[#E1306C] text-[15px]">{formData.nama_akun_ig}</strong></div>
+
                       <div className="sm:col-span-2 bg-white p-3 rounded-xl border border-gray-50 shadow-sm"><span className="block text-[11px] text-gray-400 font-bold uppercase tracking-wider mb-0.5">Fakultas / Prodi</span><strong className="text-[#1D9E75] text-[15px]">{formData.fakultas} — {formData.program_studi} <span className="text-gray-500 font-normal">({formData.angkatan})</span></strong></div>
                       
                       <div className="sm:col-span-2 bg-white p-3 rounded-xl border border-gray-50 shadow-sm">
@@ -590,9 +536,7 @@ export function PendaftaranForm() {
                       <div className="sm:col-span-2 bg-white p-3 rounded-xl border border-gray-50 shadow-sm">
                         <span className="block text-[11px] text-gray-400 font-bold uppercase tracking-wider mb-2">Dokumen & Pembayaran</span>
                         <div className="flex flex-wrap gap-2">
-                          {formData.bukti_follow_ig?.[0] && <span className="bg-pink-50 text-pink-700 border border-pink-200 px-3 py-1.5 rounded-lg text-xs font-bold">✓ Bukti IG</span>}
-                          {formData.bukti_follow_yt?.[0] && <span className="bg-red-50 text-red-700 border border-red-200 px-3 py-1.5 rounded-lg text-xs font-bold">✓ Bukti YT</span>}
-                          {formData.bukti_follow_tiktok?.[0] && <span className="bg-gray-100 text-gray-800 border border-gray-300 px-3 py-1.5 rounded-lg text-xs font-bold">✓ Bukti TikTok</span>}
+
                           {formData.bukti_pembayaran?.[0] && <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1.5 rounded-lg text-xs font-bold">✓ Bukti Bayar ({paymentMethod})</span>}
                           {paymentMethod === "COD" && <span className="bg-amber-100 text-amber-800 border border-amber-300 px-3 py-1.5 rounded-lg text-xs font-bold">⚠️ Bayar COD</span>}
                         </div>
@@ -628,7 +572,7 @@ export function PendaftaranForm() {
                   </Button>
                 ) : (
                   <Button type="submit" disabled={isLoading} className="h-12 px-8 rounded-2xl bg-gradient-to-r from-[#1D9E75] to-[#12bd87] hover:from-[#15805e] hover:to-[#0f966b] text-white font-bold shadow-xl shadow-[#1D9E75]/30 transition-all hover:scale-[1.02]">
-                    {isLoading ? "Memproses Data..." : "Kirim Pendaftaran Resmi ✓"}
+                    {isLoading ? "Memproses Data..." : "Kirim Pendaftaran"}
                   </Button>
                 )}
               </div>

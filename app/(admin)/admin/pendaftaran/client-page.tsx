@@ -174,7 +174,6 @@ export default function PendaftaranClientPage() {
                 <TableHead className="whitespace-nowrap font-bold text-[#0d2318]">Prodi</TableHead>
                 <TableHead className="whitespace-nowrap font-bold text-[#0d2318]">Angkatan</TableHead>
                 <TableHead className="whitespace-nowrap font-bold text-[#0d2318]">Bidang Minat</TableHead>
-                <TableHead className="whitespace-nowrap font-bold text-[#0d2318]">Akun IG</TableHead>
                 <TableHead className="whitespace-nowrap font-bold text-[#0d2318]">Tanggal Daftar</TableHead>
                 <TableHead className="whitespace-nowrap font-bold text-[#0d2318]">Bukti Dokumen</TableHead>
                 <TableHead className="whitespace-nowrap font-bold text-[#0d2318]">Status</TableHead>
@@ -184,13 +183,13 @@ export default function PendaftaranClientPage() {
               <TableBody>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={17} className="h-24 text-center text-emerald-700/60 font-medium">
+                    <TableCell colSpan={16} className="h-24 text-center text-emerald-700/60 font-medium">
                       Memuat data...
                     </TableCell>
                   </TableRow>
                 ) : filteredData.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={17} className="h-24 text-center text-emerald-700/60 font-medium">
+                    <TableCell colSpan={16} className="h-24 text-center text-emerald-700/60 font-medium">
                       {filterAngkatan !== "all"
                         ? `Tidak ada pendaftar dari angkatan ${filterAngkatan}.`
                         : "Tidak ada data pendaftaran."}
@@ -241,9 +240,6 @@ export default function PendaftaranClientPage() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <div className="text-sm font-medium text-pink-600 whitespace-nowrap">{item.nama_akun_ig || "-"}</div>
-                        </TableCell>
-                        <TableCell>
                           <div className="text-sm text-[#0d2318] whitespace-nowrap">
                             {item.created_at ? format(new Date(item.created_at.replace(" ", "T")), "d MMM yyyy", { locale: id }) : "-"}
                           </div>
@@ -259,25 +255,7 @@ export default function PendaftaranClientPage() {
                               <DialogHeader>
                                 <DialogTitle>Dokumen Pendaftaran — {item.nama_lengkap}</DialogTitle>
                               </DialogHeader>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                                <div className="space-y-2">
-                                  <h4 className="font-bold text-sm text-gray-700 bg-gray-50 p-2 rounded border">Bukti Follow Instagram</h4>
-                                  {item.bukti_follow_ig ? (
-                                    <img src={item.bukti_follow_ig} alt="IG" className="w-full rounded-md object-contain border" />
-                                  ) : <div className="text-xs text-gray-400 italic p-4 text-center border rounded-md">Tidak ada file</div>}
-                                </div>
-                                <div className="space-y-2">
-                                  <h4 className="font-bold text-sm text-gray-700 bg-gray-50 p-2 rounded border">Bukti Follow YouTube</h4>
-                                  {item.bukti_follow_yt ? (
-                                    <img src={item.bukti_follow_yt} alt="YT" className="w-full rounded-md object-contain border" />
-                                  ) : <div className="text-xs text-gray-400 italic p-4 text-center border rounded-md">Tidak ada file</div>}
-                                </div>
-                                <div className="space-y-2">
-                                  <h4 className="font-bold text-sm text-gray-700 bg-gray-50 p-2 rounded border">Bukti Follow TikTok</h4>
-                                  {item.bukti_follow_tiktok ? (
-                                    <img src={item.bukti_follow_tiktok} alt="TikTok" className="w-full rounded-md object-contain border" />
-                                  ) : <div className="text-xs text-gray-400 italic p-4 text-center border rounded-md">Tidak ada file</div>}
-                                </div>
+                              <div className="grid grid-cols-1 gap-4 mt-4">
                                 <div className="space-y-2">
                                   <h4 className="font-bold text-sm text-amber-700 bg-amber-50 p-2 rounded border border-amber-200">Bukti Pembayaran</h4>
                                   {item.bukti_pembayaran ? (

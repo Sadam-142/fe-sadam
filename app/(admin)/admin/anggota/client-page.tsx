@@ -192,16 +192,15 @@ export default function AnggotaClientPage() {
                   <TableHead className="whitespace-nowrap font-bold text-[#0d2318]">Program Studi</TableHead>
                   <TableHead className="whitespace-nowrap font-bold text-[#0d2318]">Angkatan</TableHead>
                   <TableHead className="whitespace-nowrap font-bold text-[#0d2318]">Bidang Minat</TableHead>
-                  <TableHead className="whitespace-nowrap font-bold text-[#0d2318]">Akun IG</TableHead>
                   <TableHead className="whitespace-nowrap font-bold text-[#0d2318]">Peran & Status</TableHead>
                   <TableHead className="text-right whitespace-nowrap font-bold text-[#0d2318]">Aksi</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {isLoading ? (
-                  <TableRow><TableCell colSpan={15} className="text-center h-24 text-emerald-800/60 font-medium">Memuat...</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={14} className="text-center h-24 text-emerald-800/60 font-medium">Memuat...</TableCell></TableRow>
                 ) : filteredAnggota.length === 0 ? (
-                  <TableRow><TableCell colSpan={15} className="text-center h-24 text-emerald-800/60 font-medium">
+                  <TableRow><TableCell colSpan={14} className="text-center h-24 text-emerald-800/60 font-medium">
                     {anggota.length === 0 ? "Belum ada anggota." : "Tidak ada anggota yang cocok dengan filter pencarian."}
                   </TableCell></TableRow>
                 ) : (
@@ -246,9 +245,6 @@ export default function AnggotaClientPage() {
                         <div className="text-xs text-gray-700 max-w-[150px] truncate" title={item.bidang_minat}>
                           {item.bidang_minat || "-"}
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm font-medium text-pink-600 whitespace-nowrap">{item.nama_akun_ig || "-"}</div>
                       </TableCell>
                       <TableCell className="whitespace-nowrap">
                         <div className="flex flex-col gap-2 items-start">
