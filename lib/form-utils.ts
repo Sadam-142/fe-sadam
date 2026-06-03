@@ -72,22 +72,10 @@ export function getStepWithError(errors: FieldErrors) {
   return -1;
 }
 
-export function buildFormData(values: FormValues) {
-  const formData = new FormData();
-
-  Object.entries(values).forEach(([key, value]) => {
-    if (key === "bukti_pembayaran") {
-      if (value instanceof File) formData.append(key, value);
-      return;
-    }
-
-    if (key === "bidang_minat") {
-      formData.append(key, (value as string[]).join(", "));
-      return;
-    }
-
-    formData.append(key, value as string);
-  });
-
-  return formData;
+export function buildPendaftaranPayload(values: FormValues, buktiPembayaranUrl?: string) {
+  return {
+    ...values,
+    bidang_minat: values.bidang_minat.join(", "),
+    bukti_pembayaran: buktiPembayaranUrl || undefined,
+  };
 }

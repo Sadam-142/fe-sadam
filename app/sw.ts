@@ -69,6 +69,29 @@ self.addEventListener("notificationclick", (event: NotificationEvent) => {
 // Import IndexedDB helpers (assuming TS compiles them correctly for SW)
 import { getAllPendingPresensi, removePendingPresensi } from "../lib/idb";
 
+const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dbxuyabsc";
+const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "sadam_upload";
+
+async function uploadPresensiPhoto(file: Blob, fileName: string) {
+  const formData = new FormData();
+  formData.append("file", file, fileName);
+  formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+  formData.append("folder", "ukm-risalah");
+
+  const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+    method: "POST",
+    body: formData,
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok || !data.secure_url) {
+    throw new Error(data.error?.message || "Gagal upload bukti presensi");
+  }
+
+  return data.secure_url as string;
+}
+
 // Define SyncEvent interface if missing
 interface SyncEvent extends ExtendableEvent {
   readonly lastChance: boolean;
@@ -84,22 +107,25 @@ self.addEventListener("sync", (event: SyncEvent) => {
           const pendings = await getAllPendingPresensi();
           
           for (const item of pendings) {
-            const formData = new FormData();
-            formData.append("id_anggota", item.id_anggota);
-            formData.append("id_kegiatan", item.id_kegiatan);
-            formData.append("latitude", item.latitude);
-            formData.append("longitude", item.longitude);
-            if (item.keterangan) formData.append("keterangan", item.keterangan);
-            
-            // Reconstruct the file blob
+            // Reconstruct the file blob, upload it to Cloudinary, then send only the URL to the backend.
             const blob = new Blob([item.bukti_foto.buffer], { type: item.bukti_foto.type });
-            formData.append("bukti_foto", blob, item.bukti_foto.name);
+            const buktiFotoUrl = await uploadPresensiPhoto(blob, item.bukti_foto.name);
 
             // Fetch to real API
             const baseUrl = self.location.origin;
             const res = await fetch(`${baseUrl}/api/presensi`, {
               method: "POST",
-              body: formData,
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                id_anggota: item.id_anggota,
+                id_kegiatan: item.id_kegiatan,
+                latitude: item.latitude,
+                longitude: item.longitude,
+                keterangan: item.keterangan || undefined,
+                bukti_foto: buktiFotoUrl,
+              }),
             });
 
             if (res.ok || res.status === 400 || res.status === 409) {

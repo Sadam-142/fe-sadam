@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import { ActivityAttendanceCard } from "@/components/admin/dashboard/activity-attendance-card";
 import { api } from "@/lib/api";
+import { uploadImageToCloudinary } from "@/lib/cloudinary";
 import type { DashboardData } from "@/components/admin/dashboard/types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -109,13 +110,11 @@ export default function KegiatanClientPage() {
 
   const handleCreate = async () => {
     try {
-      const payload = new FormData();
-      Object.entries(formData).forEach(([key, value]) => {
-        if (value !== null && value !== "") {
-          payload.append(key, value as Blob | string);
-        }
+      const pamfletUrl = formData.pamflet ? await uploadImageToCloudinary(formData.pamflet) : undefined;
+      const res = await api.post("/kegiatan", {
+        ...formData,
+        pamflet: pamfletUrl,
       });
-      const res = await api.post("/kegiatan", payload);
       if (res.success) {
         toast.success("Kegiatan berhasil ditambahkan");
         setIsCreateDialogOpen(false);
@@ -150,13 +149,11 @@ export default function KegiatanClientPage() {
   const handleUpdate = async () => {
     if (!selectedItem) return;
     try {
-      const payload = new FormData();
-      Object.entries(formData).forEach(([key, value]) => {
-        if (value !== null && value !== "") {
-          payload.append(key, value as Blob | string);
-        }
+      const pamfletUrl = formData.pamflet ? await uploadImageToCloudinary(formData.pamflet) : undefined;
+      const res = await api.put(`/kegiatan/${selectedItem.id_kegiatan}`, {
+        ...formData,
+        ...(pamfletUrl ? { pamflet: pamfletUrl } : {}),
       });
-      const res = await api.put(`/kegiatan/${selectedItem.id_kegiatan}`, payload);
       if (res.success) {
         toast.success("Kegiatan berhasil diperbarui");
         setIsEditDialogOpen(false);

@@ -7,7 +7,7 @@ import { api } from "@/lib/api";
 import {
   getValidationErrors,
   getStepWithError,
-  buildFormData,
+  buildPendaftaranPayload,
   defaultValues,
   STEPS,
   STEP_FIELDS,
@@ -15,6 +15,7 @@ import {
   type FieldErrors,
 } from "@/lib/form-utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { uploadImageToCloudinary } from "@/lib/cloudinary";
 import { toast } from "sonner";
 import { SuccessScreen } from "./pendaftaran/success-screen";
 import { FormStepsIndicator } from "./pendaftaran/form-steps-indicator";
@@ -52,7 +53,10 @@ export function PendaftaranForm() {
 
       try {
         setIsLoading(true);
-        const res = await api.post("/pendaftaran", buildFormData(value));
+        const buktiPembayaranUrl = value.bukti_pembayaran
+          ? await uploadImageToCloudinary(value.bukti_pembayaran)
+          : undefined;
+        const res = await api.post("/pendaftaran", buildPendaftaranPayload(value, buktiPembayaranUrl));
 
         if (res.success) {
           setIsSuccess(true);
