@@ -7,6 +7,7 @@ import { ArrowLeft, MapPin } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { useAuth } from "@/components/shared/auth-provider";
 import { api } from "@/lib/api";
+import { uploadImageToCloudinary } from "@/lib/cloudinary";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -140,20 +141,21 @@ export function PresensiClientPage({ idKegiatan }: PresensiClientPageProps) {
     try {
       setIsSubmitting(true);
 
-      const payload = new FormData();
-      payload.append("id_anggota", String(user.id_anggota));
-      payload.append("id_kegiatan", String(idKegiatan));
-      payload.append("latitude", String(location.lat));
-      payload.append("longitude", String(location.lng));
-      if (keterangan) payload.append("keterangan", keterangan);
-      payload.append("bukti_foto", buktiFoto);
-
       // Paksa masuk ke offline handler jika benar-benar offline
       if (!navigator.onLine) {
         throw new Error("Failed to fetch");
       }
 
-      const res = await api.post("/presensi", payload);
+      const buktiFotoUrl = await uploadImageToCloudinary(buktiFoto);
+
+      const res = await api.post("/presensi", {
+        id_anggota: String(user.id_anggota),
+        id_kegiatan: String(idKegiatan),
+        latitude: String(location.lat),
+        longitude: String(location.lng),
+        keterangan: keterangan || undefined,
+        bukti_foto: buktiFotoUrl,
+      });
 
       if (res.success) {
         toast.success("Presensi berhasil dikirim!");

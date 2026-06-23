@@ -4,6 +4,7 @@
 import { useState, useRef } from "react";
 import { useAuth } from "@/components/shared/auth-provider";
 import { api } from "@/lib/api";
+import { uploadImageToCloudinary } from "@/lib/cloudinary";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -111,16 +112,15 @@ export default function ProfilPage() {
     try {
       setIsSavingProfile(true);
       
-      const formData = new FormData();
-      formData.append("nama_lengkap", profileData.nama_lengkap);
-      formData.append("no_hp", profileData.no_hp);
-      formData.append("email", profileData.email);
-      formData.append("alamat_domisili", profileData.alamat_domisili);
-      if (selectedPhoto) {
-        formData.append("foto_profil", selectedPhoto);
-      }
+      const fotoProfilUrl = selectedPhoto ? await uploadImageToCloudinary(selectedPhoto) : undefined;
 
-      const res = await api.put("/auth/profile", formData);
+      const res = await api.put("/auth/profile", {
+        nama_lengkap: profileData.nama_lengkap,
+        no_hp: profileData.no_hp,
+        email: profileData.email,
+        alamat_domisili: profileData.alamat_domisili,
+        foto_profil: fotoProfilUrl,
+      });
       if (res.success) {
         toast.success("Profil berhasil diperbarui!");
         setIsEditingProfile(false);

@@ -102,9 +102,9 @@ export function PendaftaranForm() {
   const [provinces, setProvinces] = useState<any[]>([]);
   const [cities, setCities] = useState<any[]>([]);
   const [districts, setDistricts] = useState<any[]>([]);
-  const [selectedProvince, setSelectedProvince] = useState<{id: string, name: string} | null>(null);
-  const [selectedCity, setSelectedCity] = useState<{id: string, name: string} | null>(null);
-  const [selectedDistrict, setSelectedDistrict] = useState<{id: string, name: string} | null>(null);
+  const [selectedProvince, setSelectedProvince] = useState<{code: string, name: string} | null>(null);
+  const [selectedCity, setSelectedCity] = useState<{code: string, name: string} | null>(null);
+  const [selectedDistrict, setSelectedDistrict] = useState<{code: string, name: string} | null>(null);
   const [detailAlamat, setDetailAlamat] = useState("");
 
   const {
@@ -123,18 +123,18 @@ export function PendaftaranForm() {
   });
 
   useEffect(() => {
-    fetch("https://emsifa.github.io/api-wilayah-indonesia/api/provinces.json")
+    fetch("https://wilayah.id/api/provinces.json")
       .then(res => res.json())
-      .then(data => setProvinces(data))
+      .then(data => setProvinces(data.data))
       .catch(err => console.error(err));
   }, []);
 
   useEffect(() => {
     if (selectedProvince) {
-      fetch(`https://emsifa.github.io/api-wilayah-indonesia/api/regencies/${selectedProvince.id}.json`)
+      fetch(`https://wilayah.id/api/regencies/${selectedProvince.code}.json`)
         .then(res => res.json())
         .then(data => {
-          setCities(data);
+          setCities(data.data);
           setSelectedCity(null);
           setSelectedDistrict(null);
           setDistricts([]);
@@ -145,10 +145,10 @@ export function PendaftaranForm() {
 
   useEffect(() => {
     if (selectedCity) {
-      fetch(`https://emsifa.github.io/api-wilayah-indonesia/api/districts/${selectedCity.id}.json`)
+      fetch(`https://wilayah.id/api/districts/${selectedCity.code}.json`)
         .then(res => res.json())
         .then(data => {
-          setDistricts(data);
+          setDistricts(data.data);
           setSelectedDistrict(null);
         })
         .catch(err => console.error(err));
@@ -412,42 +412,42 @@ export function PendaftaranForm() {
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <Select 
                         onValueChange={(val) => {
-                          const prov = provinces.find(p => p.id === val);
+                          const prov = provinces.find(p => p.code === val);
                           setSelectedProvince(prov || null);
                         }}
-                        value={selectedProvince?.id || ""}
+                        value={selectedProvince?.code || undefined}
                       >
                         <SelectTrigger className="h-11 rounded-xl bg-white"><SelectValue placeholder="Pilih Provinsi" /></SelectTrigger>
                         <SelectContent>
-                          {provinces.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
+                          {provinces.map(p => <SelectItem key={p.code} value={p.code}>{p.name}</SelectItem>)}
                         </SelectContent>
                       </Select>
 
                       <Select 
                         onValueChange={(val) => {
-                          const city = cities.find(c => c.id === val);
+                          const city = cities.find(c => c.code === val);
                           setSelectedCity(city || null);
                         }}
-                        value={selectedCity?.id || ""}
+                        value={selectedCity?.code || undefined}
                         disabled={!selectedProvince}
                       >
                         <SelectTrigger className="h-11 rounded-xl bg-white"><SelectValue placeholder={selectedProvince ? "Pilih Kota/Kab" : "Pilih Provinsi Dulu"} /></SelectTrigger>
                         <SelectContent>
-                          {cities.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+                          {cities.map(c => <SelectItem key={c.code} value={c.code}>{c.name}</SelectItem>)}
                         </SelectContent>
                       </Select>
 
                       <Select 
                         onValueChange={(val) => {
-                          const dist = districts.find(d => d.id === val);
+                          const dist = districts.find(d => d.code === val);
                           setSelectedDistrict(dist || null);
                         }}
-                        value={selectedDistrict?.id || ""}
+                        value={selectedDistrict?.code || undefined}
                         disabled={!selectedCity}
                       >
                         <SelectTrigger className="h-11 rounded-xl bg-white"><SelectValue placeholder={selectedCity ? "Pilih Kecamatan" : "Pilih Kota Dulu"} /></SelectTrigger>
                         <SelectContent>
-                          {districts.map(d => <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>)}
+                          {districts.map(d => <SelectItem key={d.code} value={d.code}>{d.name}</SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
