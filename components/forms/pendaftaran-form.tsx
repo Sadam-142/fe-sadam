@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -99,6 +99,14 @@ export function PendaftaranForm() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("BRI");
 
+  const [provinces, setProvinces] = useState<any[]>([]);
+  const [cities, setCities] = useState<any[]>([]);
+  const [districts, setDistricts] = useState<any[]>([]);
+  const [selectedProvince, setSelectedProvince] = useState<{id: string, name: string} | null>(null);
+  const [selectedCity, setSelectedCity] = useState<{id: string, name: string} | null>(null);
+  const [selectedDistrict, setSelectedDistrict] = useState<{id: string, name: string} | null>(null);
+  const [detailAlamat, setDetailAlamat] = useState("");
+
   const {
     register,
     handleSubmit,
@@ -113,6 +121,49 @@ export function PendaftaranForm() {
       bidang_minat: [],
     },
   });
+
+  useEffect(() => {
+    fetch("https://emsifa.github.io/api-wilayah-indonesia/api/provinces.json")
+      .then(res => res.json())
+      .then(data => setProvinces(data))
+      .catch(err => console.error(err));
+  }, []);
+
+  useEffect(() => {
+    if (selectedProvince) {
+      fetch(`https://emsifa.github.io/api-wilayah-indonesia/api/regencies/${selectedProvince.id}.json`)
+        .then(res => res.json())
+        .then(data => {
+          setCities(data);
+          setSelectedCity(null);
+          setSelectedDistrict(null);
+          setDistricts([]);
+        })
+        .catch(err => console.error(err));
+    }
+  }, [selectedProvince]);
+
+  useEffect(() => {
+    if (selectedCity) {
+      fetch(`https://emsifa.github.io/api-wilayah-indonesia/api/districts/${selectedCity.id}.json`)
+        .then(res => res.json())
+        .then(data => {
+          setDistricts(data);
+          setSelectedDistrict(null);
+        })
+        .catch(err => console.error(err));
+    }
+  }, [selectedCity]);
+
+  useEffect(() => {
+    let fullAddress = [];
+    if (detailAlamat) fullAddress.push(detailAlamat);
+    if (selectedDistrict) fullAddress.push(`Kec. ${selectedDistrict.name}`);
+    if (selectedCity) fullAddress.push(selectedCity.name);
+    if (selectedProvince) fullAddress.push(`Prov. ${selectedProvince.name}`);
+    
+    setValue("alamat_domisili", fullAddress.join(", "), { shouldValidate: currentStep === 0 && fullAddress.length > 0 });
+  }, [selectedProvince, selectedCity, selectedDistrict, detailAlamat, setValue, currentStep]);
 
   const nextStep = async () => {
     let fieldsToValidate: any[] = [];
@@ -355,10 +406,61 @@ export function PendaftaranForm() {
                       {errors.tanggal_lahir && <p className="text-xs text-red-500">{errors.tanggal_lahir.message}</p>}
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-xs font-bold text-gray-700 uppercase">Alamat Domisili</Label>
-                    <Input placeholder="Alamat lengkap saat ini" className="h-12 rounded-xl" {...register("alamat_domisili")} />
-                    {errors.alamat_domisili && <p className="text-xs text-red-500">{errors.alamat_domisili.message}</p>}
+                  <div className="space-y-4 border p-4 rounded-2xl bg-gray-50/50">
+                    <Label className="text-xs font-bold text-gray-700 uppercase">Alamat Domisili Lengkap</Label>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <Select 
+                        onValueChange={(val) => {
+                          const prov = provinces.find(p => p.id === val);
+                          setSelectedProvince(prov || null);
+                        }}
+                        value={selectedProvince?.id || ""}
+                      >
+                        <SelectTrigger className="h-11 rounded-xl bg-white"><SelectValue placeholder="Pilih Provinsi" /></SelectTrigger>
+                        <SelectContent>
+                          {provinces.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+
+                      <Select 
+                        onValueChange={(val) => {
+                          const city = cities.find(c => c.id === val);
+                          setSelectedCity(city || null);
+                        }}
+                        value={selectedCity?.id || ""}
+                        disabled={!selectedProvince}
+                      >
+                        <SelectTrigger className="h-11 rounded-xl bg-white"><SelectValue placeholder={selectedProvince ? "Pilih Kota/Kab" : "Pilih Provinsi Dulu"} /></SelectTrigger>
+                        <SelectContent>
+                          {cities.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+
+                      <Select 
+                        onValueChange={(val) => {
+                          const dist = districts.find(d => d.id === val);
+                          setSelectedDistrict(dist || null);
+                        }}
+                        value={selectedDistrict?.id || ""}
+                        disabled={!selectedCity}
+                      >
+                        <SelectTrigger className="h-11 rounded-xl bg-white"><SelectValue placeholder={selectedCity ? "Pilih Kecamatan" : "Pilih Kota Dulu"} /></SelectTrigger>
+                        <SelectContent>
+                          {districts.map(d => <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <Input 
+                      placeholder="Detail Jalan, RT/RW, Desa/Kelurahan..." 
+                      className="h-12 rounded-xl bg-white" 
+                      value={detailAlamat}
+                      onChange={(e) => setDetailAlamat(e.target.value)}
+                    />
+                    
+                    <input type="hidden" {...register("alamat_domisili")} />
+                    {errors.alamat_domisili && <p className="text-xs text-red-500">{errors.alamat_domisili.message as string}</p>}
                   </div>
                   <div className="space-y-2">
                     <Label className="text-xs font-bold text-gray-700 uppercase">Nomor WhatsApp</Label>

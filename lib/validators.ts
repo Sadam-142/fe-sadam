@@ -5,7 +5,7 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 export const pendaftaranSchema = z.object({
   nama_lengkap: z.string().min(3, "Nama lengkap minimal 3 karakter"),
   nim: z.string().min(5, "NIM tidak valid"),
-  email: z.string().email("Format email tidak valid"),
+  email: z.string().email("Format email tidak valid").endsWith("@walisongo.student.ac.id", "Gunakan email @walisongo.student.ac.id"),
   angkatan: z.string().min(4, "Angkatan tidak valid"),
   no_hp: z.string().min(10, "Nomor HP tidak valid"),
   fakultas: z.string().min(2, "Fakultas wajib diisi"),
