@@ -45,7 +45,7 @@ export function SuccessScreen({ nim }: { nim?: string }) {
             <div>
               <span className="text-[11px] text-gray-500 font-bold uppercase tracking-wider block mb-1">Password Default</span>
               <div className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-[14px] font-mono text-gray-800">
-                {nim || "NIM_ANDA"}
+                {nim ? `Risalah${nim}` : "RisalahNIM_ANDA"}
               </div>
             </div>
           </div>
