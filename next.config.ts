@@ -12,7 +12,15 @@ const nextConfig: NextConfig = {
   turbopack : {},
   typescript: {
     ignoreBuildErrors: true,
-  }
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/api/wilayah/:path*",
+        destination: "https://wilayah.id/api/:path*",
+      },
+    ];
+  },
 };
 
 export default withSerwist(nextConfig);

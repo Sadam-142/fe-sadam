@@ -123,7 +123,7 @@ export function PendaftaranForm() {
   });
 
   useEffect(() => {
-    fetch("https://wilayah.id/api/provinces.json")
+    fetch("/api/wilayah/provinces.json")
       .then(res => res.json())
       .then(data => setProvinces(data.data))
       .catch(err => console.error(err));
@@ -131,7 +131,7 @@ export function PendaftaranForm() {
 
   useEffect(() => {
     if (selectedProvince) {
-      fetch(`https://wilayah.id/api/regencies/${selectedProvince.code}.json`)
+      fetch(`/api/wilayah/regencies/${selectedProvince.code}.json`)
         .then(res => res.json())
         .then(data => {
           setCities(data.data);
@@ -145,7 +145,7 @@ export function PendaftaranForm() {
 
   useEffect(() => {
     if (selectedCity) {
-      fetch(`https://wilayah.id/api/districts/${selectedCity.code}.json`)
+      fetch(`/api/wilayah/districts/${selectedCity.code}.json`)
         .then(res => res.json())
         .then(data => {
           setDistricts(data.data);
