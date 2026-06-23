@@ -242,14 +242,6 @@ export function PendaftaranForm() {
   };
 
   if (isSuccess) {
-    return (
-      <div 
-        className="relative min-h-screen w-full flex items-center justify-center p-4 overflow-hidden"
-        style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-      >
-        {/* BACKGROUND ELEGANT */}
-        <div className="absolute inset-0 z-0 pointer-events-none">
-          <div className="absolute inset-0 w-full h-full">
             <img src="/images/bg-login.jpeg" alt="Background" className="w-full h-full object-cover opacity-90" />
           </div>
           <div className="absolute inset-0 bg-white/80 backdrop-blur-[10px]" />
